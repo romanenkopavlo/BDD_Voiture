@@ -27,7 +27,7 @@ public class GestionDeBDD {
 
     public GestionDeBDD() throws SQLException, ClassNotFoundException {
     }
-    public void createCars() throws SQLException {
+    public void displayCars() throws SQLException {
         voitures = new ArrayList<>();
         PreparedStatement ps = con.prepareStatement("SELECT v.id id, m.id id_marque, m.nom nom_marque, v.modele modele, v.nombre_ventes nombre_ventes FROM voiture v JOIN marque m ON v.id_marque = m.id ORDER BY v.id ASC");
         ResultSet rs = ps.executeQuery();
@@ -67,10 +67,10 @@ public class GestionDeBDD {
         ps.close();
         con.close();
     }
-    public void displayChosenCars(String car) throws SQLException {
+    public void displayChosenCars(int car) throws SQLException {
         voitures = new ArrayList<>();
-        PreparedStatement ps = con.prepareStatement("SELECT v.id id, m.id id_marque, m.nom nom_marque, v.modele modele, v.nombre_ventes nombre_ventes FROM voiture v JOIN marque m ON v.id_marque = m.id WHERE m.nom =?");
-        ps.setString(1, car);
+        PreparedStatement ps = con.prepareStatement("SELECT v.id id, m.id id_marque, m.nom nom_marque, v.modele modele, v.nombre_ventes nombre_ventes FROM voiture v JOIN marque m ON v.id_marque = m.id WHERE m.id =?");
+        ps.setInt(1, car);
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
             Marque marque = new Marque(rs.getInt("id_marque"), rs.getString("nom_marque"));
@@ -89,14 +89,11 @@ public class GestionDeBDD {
             Marque marque = new Marque(rs.getInt("id"), rs.getString("nom"));
             marques.add(marque);
         }
-        rs.close();
-        ps.close();
-        con.close();
     }
 
-    public int showChosenCarsSells(String car) throws SQLException {
-        PreparedStatement ps = con.prepareStatement("SELECT SUM(nombre_ventes) AS somme FROM voiture v JOIN marque m ON v.id_marque = m.id WHERE m.nom =?");
-        ps.setString(1, car);
+    public int showChosenCarsSells(int car) throws SQLException {
+        PreparedStatement ps = con.prepareStatement("SELECT SUM(nombre_ventes) AS somme FROM voiture v JOIN marque m ON v.id_marque = m.id WHERE m.id =?");
+        ps.setInt(1, car);
         ResultSet rs = ps.executeQuery();
         if (rs.next()) {
             somme = rs.getInt("somme");
@@ -193,7 +190,7 @@ public class GestionDeBDD {
         ps.setInt(1, numero - 1);
         ResultSet rs = ps.executeQuery();
         if (rs.next()) {
-            voiture = "Le numero " + rs.getInt("id") + " est " + rs.getString("nom_marque") + " " + rs.getString("modele") + ". Le nombre de ventes: " + rs.getInt("nombre_ventes");
+            voiture = rs.getString("nom_marque") + " " + rs.getString("modele") + ". Le nombre de ventes: " + rs.getInt("nombre_ventes");
         }
         rs.close();
         ps.close();
