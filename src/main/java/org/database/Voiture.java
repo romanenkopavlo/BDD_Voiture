@@ -1,5 +1,4 @@
 package org.database;
-
 public class Voiture {
     private int id;
     private int nombre_de_ventes;
